@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | STACKLY</title>
+    
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+    
+    :root {
+        --bg-dark: #121212;
+        --bg-main: #18181b;
+        --bg-card: #27272a;
+        --text-primary: #f8fafc;
+        --text-secondary: #a1a1aa;
+        --accent: #a3e635; /* Bright lime green for dark mode */
+        --accent-hover: #bef264;
+        --border: #3f3f46;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+        width: 260px;
+        background-color: var(--bg-dark);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 24px 0;
+        height: 100%;
+    }
+    
+    .brand {
+        padding: 0 24px;
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .brand img {
+        height: 60px;
+        filter: brightness(2) contrast(1.2) drop-shadow(0 0 12px rgba(163, 230, 53, 0.4));
+        object-fit: contain;
+    }
+    
+    .user-profile {
+        margin: 0 24px 32px;
+        padding: 16px;
+        background-color: var(--bg-card);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid var(--border);
+    }
+    
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: var(--accent);
+        color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+    
+    .user-info h4 {
+        font-size: 0.875rem;
+        margin-bottom: 2px;
+    }
+    
+    .user-info p {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+    
+    .role-badge {
+        font-size: 0.6rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .menu-group {
+        margin-bottom: 24px;
+    }
+    
+    .menu-label {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0 24px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+    
+    .menu-item:hover {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .menu-item.active {
+        background-color: var(--accent);
+        color: #000;
+        font-weight: 600;
+    }
+    
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 32px 40px;
+        overflow-y: auto;
+    }
+    
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+    
+    .card {
+        background-color: var(--bg-card);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid var(--border);
+    }
+    
+    .grid-5 {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+    
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+    
+    .stat-val {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 12px 0 8px;
+    }
+    
+    .stat-growth {
+        font-size: 0.75rem;
+        color: var(--accent);
+    }
+    
+    .btn {
+        background-color: var(--accent);
+        color: #000;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+/* ========== MOBILE HAMBURGER FOR DASHBOARD ========== */
+.dash-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+}
+.dash-hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--text-primary);
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+}
+
+/* 1440px */
+@media (max-width: 1440px) {
+    .main-content { padding: 28px 32px; }
+}
+
+/* 1280px */
+@media (max-width: 1280px) {
+    .sidebar { width: 220px; }
+    .main-content { padding: 24px 28px; }
+    .grid-5 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* 1024px - Tablet Landscape */
+@media (max-width: 1024px) {
+    .sidebar { width: 200px; }
+    .main-content { padding: 20px 24px; }
+    .grid-5 { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .topbar { flex-direction: row; justify-content: space-between; align-items: center; }
+    .stat-val { font-size: 1.5rem; }
+}
+
+/* 768px - Tablet Portrait: Sidebar becomes off-canvas */
+@media (max-width: 768px) {
+    .dash-hamburger { display: block; position: fixed; top: 14px; left: 16px; z-index: 1001; }
+    body { flex-direction: column; }
+    .sidebar {
+        position: fixed;
+        top: 0; left: -280px;
+        width: 260px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease;
+        overflow-y: auto;
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-overlay.active { display: block; }
+    .main-content { width: 100%; padding: 84px 16px 24px; height: 100vh; }
+    .grid-5 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    
+    .topbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 60px !important;
+        background: #121212 !important; /* Very dark background for header */
+        z-index: 997 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        padding: 0 16px 0 56px !important;
+        margin: 0 !important;
+        border-bottom: 1px solid var(--border) !important;
+    }
+    .topbar h2 { display: none !important; }
+    .topbar span { display: none !important; } /* Hide the profile name next to avatar */
+    .topbar::before {
+        content: '';
+        display: block;
+        width: 120px;
+        height: 30px;
+        background: url('assets/logo.webp') no-repeat center left;
+        background-size: contain;
+        margin-right: auto;
+        margin-top: -8px; /* Force the logo box upwards in the flex container */
+    }
+    /* Fix absolute positioned card elements overlapping on mobile */
+    .card [style*="position: absolute"] {
+        position: relative !important;
+        right: 0 !important;
+        top: 0 !important;
+        transform: none !important;
+        width: 100% !important;
+        margin-top: 24px !important;
+    }
+    
+    .card { padding: 16px; border-radius: 12px; }
+    table { font-size: 0.75rem; }
+}
+
+
+    /* Fix text overflow in hero cards */
+    .card h1 { font-size: 1.75rem !important; word-wrap: break-word; overflow-wrap: break-word; hyphens: auto; line-height: 1.2; }
+    .card h1 span { word-wrap: break-word; }
+    
+/* 480px - Large Phone */
+@media (max-width: 480px) {
+    .main-content { padding: 56px 16px 16px; }
+    .grid-5 { grid-template-columns: 1fr; }
+    .stat-val { font-size: 1.25rem; }
+    .topbar { margin-bottom: 24px; padding-left: 36px; }
+    .topbar h2 { font-size: 1.1rem; }
+    .user-profile { margin: 0 16px 24px; padding: 12px; }
+    .menu-item { padding: 10px 16px; font-size: 0.8rem; }
+    .brand { margin-bottom: 20px; }
+    .brand img { height: 45px !important; }
+}
+
+/* 390px */
+@media (max-width: 390px) {
+    .main-content { padding: 52px 12px 12px; }
+    .card { padding: 12px; }
+    .topbar h2 { font-size: 1rem; }
+    .stat-val { font-size: 1.1rem; }
+    .btn { padding: 6px 12px; font-size: 0.75rem; }
+}
+
+/* 320px - Smallest screens */
+@media (max-width: 320px) {
+    .main-content { padding: 48px 8px 8px; }
+    .card { padding: 10px; border-radius: 8px; }
+    .user-profile { margin: 0 12px 16px; }
+    .brand img { height: 36px !important; }
+    h1 { font-size: 1.5rem !important; } h2, h3 { font-size: 1.2rem !important; } .card h1 { font-size: 1.5rem !important; }
+}
+</style>
+
+</head>
+<body>
+    <button class="dash-hamburger" id="dashHamburger">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar">
+        <div class="brand">
+            <a href="index.html" style="display: flex; justify-content: center; align-items: center; text-decoration: none;"><img src="assets/logo.webp" alt="STACKLY"></a>
+            
+        </div>
+        
+        <div class="user-profile">
+            <div class="avatar">A</div>
+            <div class="user-info">
+                <h4>Gagana <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" style="vertical-align: middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></h4>
+                <p>admin@stackly.com</p>
+                <div class="role-badge">SUPER ADMIN</div>
+            </div>
+        </div>
+        
+        <div class="menu-group">
+            <div class="menu-label">MAIN</div>
+            <a href="#" class="menu-item active" data-target="dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg> Dashboard</a>
+            <a href="#" class="menu-item" data-target="students"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Students</a>
+            <a href="#" class="menu-item" data-target="mentors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg> Mentors</a>
+            <a href="#" class="menu-item" data-target="reports"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Reports</a>
+        </div>
+        
+        <div class="menu-group">
+            <div class="menu-label">MANAGEMENT</div>
+            <a href="#" class="menu-item" data-target="library"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Course Library</a>
+            <a href="#" class="menu-item" data-target="exams"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Exams & Tests</a>
+        </div>
+        
+        <div style="flex: 1;"></div>
+        
+        
+        <div class="menu-group">
+            <div class="menu-label">SYSTEM</div>
+            <a href="#" class="menu-item" data-target="settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> 
+                Settings
+            </a>
+        </div>
+
+        <div class="menu-group" style="margin-bottom: 0;">
+            <a href="login.html" class="menu-item" style="color: #ef4444;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Logout</a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div id="view-dashboard" class="page-view active">
+        <div class="topbar">
+            <h2>Admin Dashboard</h2>
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <div style="position: relative; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" placeholder="Search students, mentors..." style="background: transparent; border: none; color: white; outline: none; width: 250px; font-size: 0.875rem;">
+                </div>
+                <div style="position: relative;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <div style="position: absolute; top: -5px; right: -5px; background: #ef4444; width: 14px; height: 14px; border-radius: 50%; font-size: 0.5rem; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold;">12</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px;">
+            <div>
+                <h1 style="font-size: 2rem; margin-bottom: 8px;">Overview</h1>
+                <p style="color: var(--text-secondary);">Welcome back, <span style="color: var(--accent);">Admin!</span> Here's what's happening today.</p>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <div style="border: 1px solid var(--border); background: var(--bg-card); padding: 8px 16px; border-radius: 8px; font-size: 0.875rem;">05 Aug 2026 📅</div>
+                <button class="btn" onclick="window.location.href='404.html'">↓ Export Report</button>
+            </div>
+        </div>
+        
+        <div class="grid-5" style="margin-bottom: 32px;">
+            <div class="card">
+                <div style="display: flex; gap: 8px; align-items: center; color: var(--text-secondary); font-size: 0.875rem;">
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: rgba(99, 102, 241, 0.1); color: #6366f1; display: flex; justify-content: center; align-items: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div> Total Students
+                </div>
+                <div class="stat-val">2,548</div>
+                <div class="stat-growth">↑ 12.5% vs last month</div>
+            </div>
+            <div class="card">
+                <div style="display: flex; gap: 8px; align-items: center; color: var(--text-secondary); font-size: 0.875rem;">
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; justify-content: center; align-items: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div> Active Students
+                </div>
+                <div class="stat-val">1,842</div>
+                <div class="stat-growth" style="color: #10b981;">↑ 15.3% vs last month</div>
+            </div>
+            <div class="card">
+                <div style="display: flex; gap: 8px; align-items: center; color: var(--text-secondary); font-size: 0.875rem;">
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; justify-content: center; align-items: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div> Total Courses
+                </div>
+                <div class="stat-val">28</div>
+                <div class="stat-growth">↑ 5.6% vs last month</div>
+            </div>
+            <div class="card">
+                <div style="display: flex; gap: 8px; align-items: center; color: var(--text-secondary); font-size: 0.875rem;">
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; justify-content: center; align-items: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div> Total Enrollments
+                </div>
+                <div class="stat-val">3,275</div>
+                <div class="stat-growth" style="color: #10b981;">↑ 18.7% vs last month</div>
+            </div>
+            <div class="card">
+                <div style="display: flex; gap: 8px; align-items: center; color: var(--text-secondary); font-size: 0.875rem;">
+                    <div style="width: 24px; height: 24px; border-radius: 4px; background: rgba(236, 72, 153, 0.1); color: #ec4899; display: flex; justify-content: center; align-items: center;">$</div> Total Revenue
+                </div>
+                <div class="stat-val">$24,580</div>
+                <div class="stat-growth" style="color: #10b981;">↑ 20.4% vs last month</div>
+            </div>
+        </div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                    <h3 style="display: flex; align-items: center; gap: 8px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg> Enrollment Growth</h3>
+                    <select style="background: transparent; border: none; color: var(--text-secondary); outline: none;">
+                        <option>This Year</option>
+                    </select>
+                </div>
+                
+                <!-- Pure CSS/SVG Line Chart Mockup -->
+                <div style="height: 250px; position: relative; padding-bottom: 20px; border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+                    <svg viewBox="0 0 800 200" style="width: 100%; height: 100%; overflow: visible;">
+                        <defs>
+                            <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.5"/>
+                                <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 0 180 L 100 150 L 200 120 L 300 100 L 400 90 L 500 70 L 600 50 L 700 20 L 800 10 L 800 200 L 0 200 Z" fill="url(#lineGrad)"/>
+                        <path d="M 0 180 L 100 150 L 200 120 L 300 100 L 400 90 L 500 70 L 600 50 L 700 20 L 800 10" fill="none" stroke="#8b5cf6" stroke-width="3"/>
+                        <circle cx="100" cy="150" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="200" cy="120" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="300" cy="100" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="400" cy="90" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="500" cy="70" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="600" cy="50" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="700" cy="20" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                        <circle cx="800" cy="10" r="4" fill="#fff" stroke="#8b5cf6" stroke-width="2"/>
+                    </svg>
+                    <div style="position: absolute; bottom: -25px; left: 0; right: 0; display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); padding-left: 20px;">
+                        <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                    <h3>Course Statistics</h3>
+                    <a href="404.html" style="color: var(--accent); text-decoration: none; font-size: 0.875rem;">View All</a>
+                </div>
+                
+                <div style="display: flex; gap: 24px; align-items: center;">
+                    <!-- CSS Conic Gradient Donut Chart -->
+                    <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(
+                        #8b5cf6 0% 28.6%, 
+                        #10b981 28.6% 50%, 
+                        #f59e0b 50% 67.9%, 
+                        #3b82f6 67.9% 85.8%, 
+                        #fcd34d 85.8% 100%
+                    ); position: relative; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                        <div style="width: 100px; height: 100px; background: var(--bg-card); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <span style="font-size: 1.5rem; font-weight: 700; color: white;">28</span>
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Courses</span>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 12px; font-size: 0.875rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #8b5cf6;"></span> Engineering</span>
+                            <span style="color: var(--text-secondary);">8 (28.6%)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span> Medical</span>
+                            <span style="color: var(--text-secondary);">6 (21.4%)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span> Business</span>
+                            <span style="color: var(--text-secondary);">5 (17.9%)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span> IT & Code</span>
+                            <span style="color: var(--text-secondary);">5 (17.9%)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 8px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #fcd34d;"></span> Languages</span>
+                            <span style="color: var(--text-secondary);">4 (14.2%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+
+        </div> <!-- End view-dashboard -->
+        
+        
+        <div id="view-students" class="page-view" style="display: none;">
+            <div class="topbar">
+                <h2>Manage Students</h2>
+                <div style="display: flex; gap: 12px;">
+                    <input type="text" placeholder="Search ID or Name..." style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
+                    <button class="btn" onclick="window.location.href='404.html'">+ Add Student</button>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;" style="margin-bottom: 24px;">
+                <div class="card" style="text-align: center;"><h3 style="color: var(--text-secondary); font-size: 0.875rem;">Total Students</h3><h1 style="font-size: 2.5rem;">2,548</h1></div>
+                <div class="card" style="text-align: center;"><h3 style="color: var(--text-secondary); font-size: 0.875rem;">Active This Week</h3><h1 style="font-size: 2.5rem; color: var(--accent);">1,842</h1></div>
+                <div class="card" style="text-align: center;"><h3 style="color: var(--text-secondary); font-size: 0.875rem;">New Enrollments</h3><h1 style="font-size: 2.5rem; color: #6366f1;">+124</h1></div>
+            </div>
+
+            <div class="card" style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+                    <thead>
+                        <tr style="color: var(--text-secondary); border-bottom: 1px solid var(--border);">
+                            <th style="padding-bottom: 12px; font-weight: 500;">ID</th>
+                            <th style="padding-bottom: 12px; font-weight: 500;">Name</th>
+                            <th style="padding-bottom: 12px; font-weight: 500;">Batch</th>
+                            <th style="padding-bottom: 12px; font-weight: 500;">Overall Progress</th>
+                            <th style="padding-bottom: 12px; font-weight: 500;">Status</th>
+                            <th style="padding-bottom: 12px; font-weight: 500;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1001</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Rahul Kumar</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">JEE Advanced 2026</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 85%; background: var(--accent);"></div></div>
+                                    <span style="font-size: 0.75rem;">85%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1002</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Sneha Patel</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">NEET Crash Course</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 45%; background: #6366f1;"></div></div>
+                                    <span style="font-size: 0.75rem;">45%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1003</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Arjun M.</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">Foundation Batch</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 12%; background: #6366f1;"></div></div>
+                                    <span style="font-size: 0.75rem;">12%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Inactive</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1004</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Priya Singh</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">JEE Mains Ranker</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 92%; background: var(--accent);"></div></div>
+                                    <span style="font-size: 0.75rem;">92%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1005</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Rohan Das</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">NEET Dropper</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 78%; background: var(--accent);"></div></div>
+                                    <span style="font-size: 0.75rem;">78%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1006</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Ananya Reddy</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">Foundation Batch</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 34%; background: #6366f1;"></div></div>
+                                    <span style="font-size: 0.75rem;">34%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1007</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Karan Mehta</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">JEE Advanced 2026</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 60%; background: var(--accent);"></div></div>
+                                    <span style="font-size: 0.75rem;">60%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1008</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Neha Sharma</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">NEET Crash Course</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 0%; background: #6366f1;"></div></div>
+                                    <span style="font-size: 0.75rem;">0%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Inactive</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1009</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Vikash Gupta</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">JEE Mains Ranker</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 55%; background: var(--accent);"></div></div>
+                                    <span style="font-size: 0.75rem;">55%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0;">#ST-1010</td>
+                            <td style="padding: 16px 0; font-weight: bold;">Simran Kaur</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">NEET Dropper</td>
+                            <td style="padding: 16px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="flex: 1; height: 6px; background: #3f3f46; border-radius: 3px;"><div style="height: 100%; width: 88%; background: var(--accent);"></div></div>
+                                    <span style="font-size: 0.75rem;">88%</span>
+                                </div>
+                            </td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163, 230, 53, 0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Active</span></td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 4px; cursor: pointer;" onclick="window.location.href='404.html'">Edit</button></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="view-mentors" class="page-view" style="display: none;">
+            <div class="topbar">
+                <h2>Manage Mentors</h2>
+                <button class="btn" onclick="window.location.href='404.html'">+ Add Mentor</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+
+                <div class="card" style="text-align: center; padding: 32px 24px;">
+                    <img src="assets/mentor-vikram.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--accent);">
+                    <h3 style="margin-bottom: 4px;">Dr. Vikram Singh</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Physics Dept Head</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">4.9 ★</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Rating</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">120</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Hours</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="window.location.href='404.html'">View Profile</button>
+                </div>
+
+                <div class="card" style="text-align: center; padding: 32px 24px;">
+                    <img src="assets/mentor-meera.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--accent);">
+                    <h3 style="margin-bottom: 4px;">Prof. Meera Reddy</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Chemistry Expert</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">4.8 ★</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Rating</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">95</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Hours</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="window.location.href='404.html'">View Profile</button>
+                </div>
+
+                <div class="card" style="text-align: center; padding: 32px 24px;">
+                    <img src="assets/mentor-john.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--accent);">
+                    <h3 style="margin-bottom: 4px;">John Doe</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Mathematics</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">4.7 ★</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Rating</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">82</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Hours</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="window.location.href='404.html'">View Profile</button>
+                </div>
+
+                <div class="card" style="text-align: center; padding: 32px 24px;">
+                    <img src="assets/mentor-vikram.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--accent);">
+                    <h3 style="margin-bottom: 4px;">Sarah Connor</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Biology - NEET</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">4.9 ★</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Rating</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">150</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Hours</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="window.location.href='404.html'">View Profile</button>
+                </div>
+
+                <div class="card" style="text-align: center; padding: 32px 24px;">
+                    <img src="assets/mentor-john.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--accent);">
+                    <h3 style="margin-bottom: 4px;">Dr. Anil Kumar</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Organic Chemistry</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">4.6 ★</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Rating</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">60</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Hours</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="window.location.href='404.html'">View Profile</button>
+                </div>
+
+                <div class="card" style="text-align: center; padding: 32px 24px;">
+                    <img src="assets/mentor-meera.webp" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 3px solid var(--accent);">
+                    <h3 style="margin-bottom: 4px;">Priya Verma</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 16px;">Botany</p>
+                    <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 24px;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">4.8 ★</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Rating</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.25rem;">110</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Hours</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--accent); color: var(--accent);" onclick="window.location.href='404.html'">View Profile</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="view-reports" class="page-view" style="display: none;">
+            <div class="topbar">
+                <h2>Financial Reports</h2>
+                <button class="btn" onclick="window.location.href='404.html'">Generate Export</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;" style="margin-bottom: 24px;">
+                <div class="card" style="background: linear-gradient(135deg, rgba(163,230,53,0.1) 0%, rgba(0,0,0,0) 100%);">
+                    <h3 style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Total Revenue</h3>
+                    <h1 style="font-size: 2.5rem; color: var(--accent);">$24,580</h1>
+                    <p style="font-size: 0.75rem; color: #10b981; margin-top: 8px;">↑ 12% vs last month</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Pending Payments</h3>
+                    <h1 style="font-size: 2.5rem; color: #f59e0b;">$3,420</h1>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">42 Students</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 8px;">Refunds</h3>
+                    <h1 style="font-size: 2.5rem; color: #ef4444;">$450</h1>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px;">2 Students</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 24px;">Recent Transactions</h3>
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+                    <thead><tr style="color: var(--text-secondary); border-bottom: 1px solid var(--border);"><th style="padding-bottom: 12px;">Date</th><th style="padding-bottom: 12px;">Description</th><th style="padding-bottom: 12px;">Amount</th><th style="padding-bottom: 12px;">Status</th></tr></thead>
+                    <tbody>
+<tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 01, 2026</td><td style="padding: 12px 0;">Course Enrollment #1001</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 02, 2026</td><td style="padding: 12px 0;">Course Enrollment #1002</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 03, 2026</td><td style="padding: 12px 0;">Course Enrollment #1003</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 04, 2026</td><td style="padding: 12px 0;">Course Enrollment #1004</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 05, 2026</td><td style="padding: 12px 0;">Course Enrollment #1005</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 06, 2026</td><td style="padding: 12px 0;">Course Enrollment #1006</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 07, 2026</td><td style="padding: 12px 0;">Course Enrollment #1007</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr><tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 12px 0;">Oct 08, 2026</td><td style="padding: 12px 0;">Course Enrollment #1008</td><td style="padding: 12px 0; font-family: monospace;">+$499.00</td><td style="padding: 12px 0;"><span style="color: #10b981;">Completed</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="view-library" class="page-view" style="display: none;">
+            <div class="topbar">
+                <h2>Course Library (Admin)</h2>
+                <button class="btn" onclick="window.location.href='404.html'">+ Create New Course</button>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+                <div class="card" style="display: flex; gap: 16px;">
+                    <div style="width: 100px; height: 100px; background: #27272a; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem;">📚</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 4px;">JEE Advanced Masterclass</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary);">Published • 48 Modules</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; color: var(--accent);">1,240 Enrolled</div>
+                            <button style="background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; color: white;" onclick="window.location.href='404.html'">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; gap: 16px;">
+                    <div style="width: 100px; height: 100px; background: #27272a; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem;">📚</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 4px;">NEET Biology Core</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary);">Published • 48 Modules</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; color: var(--accent);">1,240 Enrolled</div>
+                            <button style="background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; color: white;" onclick="window.location.href='404.html'">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; gap: 16px;">
+                    <div style="width: 100px; height: 100px; background: #27272a; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem;">📚</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 4px;">Foundation Physics Class 11</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary);">Published • 48 Modules</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; color: var(--accent);">1,240 Enrolled</div>
+                            <button style="background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; color: white;" onclick="window.location.href='404.html'">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; gap: 16px;">
+                    <div style="width: 100px; height: 100px; background: #27272a; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem;">📚</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 4px;">Organic Chemistry Pro</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary);">Published • 48 Modules</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; color: var(--accent);">1,240 Enrolled</div>
+                            <button style="background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; color: white;" onclick="window.location.href='404.html'">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; gap: 16px;">
+                    <div style="width: 100px; height: 100px; background: #27272a; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem;">📚</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 4px;">Calculus Integration</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary);">Published • 48 Modules</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; color: var(--accent);">1,240 Enrolled</div>
+                            <button style="background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; color: white;" onclick="window.location.href='404.html'">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="display: flex; gap: 16px;">
+                    <div style="width: 100px; height: 100px; background: #27272a; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem;">📚</div>
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 4px;">Mock Test Series 2026</h3>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary);">Published • 48 Modules</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; color: var(--accent);">1,240 Enrolled</div>
+                            <button style="background: transparent; border: 1px solid var(--border); padding: 4px 12px; border-radius: 4px; color: white;" onclick="window.location.href='404.html'">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="view-exams" class="page-view" style="display: none;">
+            <div class="topbar">
+                <h2>Exams & Tests Management</h2>
+                <button class="btn" onclick="window.location.href='404.html'">+ Schedule Exam</button>
+            </div>
+            
+            <div class="card" style="margin-bottom: 24px; background: linear-gradient(90deg, rgba(163,230,53,0.1) 0%, rgba(0,0,0,0) 100%); border-left: 4px solid var(--accent);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2 style="margin-bottom: 8px; color: var(--accent);">Global Mock Test #4 is LIVE</h2>
+                        <p style="color: var(--text-secondary);">2,450 students are currently taking this exam.</p>
+                    </div>
+                    <button class="btn" style="background: #ef4444;" onclick="window.location.href='404.html'">Force End Exam</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Upcoming Exams</h3>
+                    <div style="border-left: 2px solid var(--border); padding-left: 16px; margin-bottom: 16px;">
+                        <h4>NEET Half-Syllabus</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Oct 12, 2026 • 10:00 AM</p>
+                    </div>
+                    <div style="border-left: 2px solid var(--border); padding-left: 16px;">
+                        <h4>JEE Mains Phase 1</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary);">Oct 15, 2026 • 09:00 AM</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Past Exam Analysis</h3>
+                    <table style="width: 100%; font-size: 0.875rem; text-align: left;">
+                        <tr style="border-bottom: 1px solid var(--border);"><th style="padding: 8px 0;">Exam</th><th style="padding: 8px 0;">Avg Score</th></tr>
+                        <tr><td style="padding: 12px 0;">Mock Test #3</td><td style="padding: 12px 0; color: var(--accent);">68%</td></tr>
+                        <tr><td style="padding: 12px 0;">Physics Mechanics</td><td style="padding: 12px 0; color: #f59e0b;">42%</td></tr>
+                        <tr><td style="padding: 12px 0;">Chem Organic Basics</td><td style="padding: 12px 0; color: var(--accent);">75%</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="view-settings" class="page-view" style="display: none;">
+            <div class="topbar">
+                <h2>Platform Settings</h2>
+                <button class="btn" onclick="window.location.href='404.html'">Save All Changes</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div class="card">
+                    <h3 style="margin-bottom: 24px;">General Configuration</h3>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div>
+                            <label style="display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px;">Platform Name</label>
+                            <input type="text" value="STACKLY Education Center" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px;">Support Email</label>
+                            <input type="email" value="support@stackly.edu" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 8px;">Contact Number</label>
+                            <input type="text" value="+91 98765 43210" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 24px;">Payment Gateways</h3>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="border: 1px solid var(--accent); border-radius: 8px; padding: 16px; background: rgba(163,230,53,0.05);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4 style="color: var(--accent);">Razorpay (Active)</h4>
+                                <div style="width: 40px; height: 20px; background: var(--accent); border-radius: 10px; position: relative;"><div style="width: 16px; height: 16px; background: #000; border-radius: 50%; position: absolute; right: 2px; top: 2px;"></div></div>
+                            </div>
+                            <input type="password" value="rzp_live_xxxxxxxxxxx" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: rgba(0,0,0,0.5); color: white; font-family: monospace; font-size: 0.75rem;">
+                        </div>
+                        <div style="border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4>Stripe (Disabled)</h4>
+                                <div style="width: 40px; height: 20px; background: #3f3f46; border-radius: 10px; position: relative;"><div style="width: 16px; height: 16px; background: #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div></div>
+                            </div>
+                            <input type="password" placeholder="sk_test_..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border); background: rgba(0,0,0,0.5); color: white; font-family: monospace; font-size: 0.75rem;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h3>Administrator Roles</h3>
+                    <button style="background: transparent; border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 4px;" onclick="window.location.href='404.html'">+ Add Admin</button>
+                </div>
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
+                    <thead><tr style="color: var(--text-secondary); border-bottom: 1px solid var(--border);"><th style="padding-bottom: 12px;">Admin Name</th><th style="padding-bottom: 12px;">Email Address</th><th style="padding-bottom: 12px;">Access Level</th><th style="padding-bottom: 12px;">Last Login</th><th style="padding-bottom: 12px;">Action</th></tr></thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0; font-weight: bold;">Gaganachukki</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">admin@stackly.com</td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(163,230,53,0.1); color: var(--accent); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Super Admin</span></td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">Just now</td>
+                            <td style="padding: 16px 0;">-</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 16px 0; font-weight: bold;">John Doe</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">johndoe@stackly.com</td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(99,102,241,0.1); color: #6366f1; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Content Editor</span></td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">2 days ago</td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 4px 12px; border-radius: 4px;" onclick="window.location.href='404.html'">Revoke</button></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 16px 0; font-weight: bold;">Support Team</td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">helpdesk@stackly.com</td>
+                            <td style="padding: 16px 0;"><span style="background: rgba(245,158,11,0.1); color: #f59e0b; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Support Mod</span></td>
+                            <td style="padding: 16px 0; color: var(--text-secondary);">4 hours ago</td>
+                            <td style="padding: 16px 0;"><button style="background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 4px 12px; border-radius: 4px;" onclick="window.location.href='404.html'">Revoke</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const email = localStorage.getItem('currentUserEmail') || 'admin@stackly.com';
+        let name = email.split('@')[0];
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+        
+        const sidebarEmail = document.querySelector('.user-info p');
+        if (sidebarEmail) sidebarEmail.innerText = email;
+        
+        const sidebarName = document.querySelector('.user-info h4');
+        if (sidebarName) sidebarName.innerHTML = name + ' <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" style="vertical-align: middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+        
+        const heroName = document.querySelector('p span');
+        if (heroName) heroName.innerText = name + '!';
+        
+        const avatars = document.querySelectorAll('.avatar');
+        avatars.forEach(av => {
+            av.innerText = name.charAt(0).toUpperCase();
+        });
+    
+    // Navigation Logic
+    const menuItems = document.querySelectorAll('.menu-item[data-target]');
+    const pageViews = document.querySelectorAll('.page-view');
+    
+    menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            menuItems.forEach(m => m.classList.remove('active'));
+            item.classList.add('active');
+            
+            pageViews.forEach(view => {
+                view.style.display = 'none';
+                view.classList.remove('active');
+            });
+            
+            const targetId = 'view-' + item.getAttribute('data-target');
+            const targetView = document.getElementById(targetId);
+            if(targetView) {
+                targetView.style.display = 'block';
+                targetView.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+
+<script>
+(function() {
+    const hamburger = document.getElementById('dashHamburger');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (hamburger && sidebar && overlay) {
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            const spans = hamburger.querySelectorAll('span');
+            if (sidebar.classList.contains('open')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+            const spans = hamburger.querySelectorAll('span');
+            spans[0].style.transform = 'none';
+            spans[1].style.opacity = '1';
+            spans[2].style.transform = 'none';
+        });
+    }
+})();
+</script>
+</body>
+</html>

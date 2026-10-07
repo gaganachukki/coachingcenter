@@ -56,7 +56,7 @@
 
     <main style="padding-top: 80px; padding-bottom: 80px; min-height: 70vh;">
         <div class="container animate-on-scroll">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 64px; align-items: start;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); gap: 64px; align-items: start;">
                 <!-- Contact Info -->
                 <div style="background: var(--light-bg); padding: 48px; border-radius: var(--radius-xl);">
                     <h2 style="font-size: 2.5rem; margin-bottom: 32px;">Get In Touch</h2>
@@ -87,18 +87,18 @@
                 
                 <!-- Contact Form -->
                 <div style="background: var(--white); padding: 48px; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border-color);">
-                    <form id="contactForm">
+                    <form id="contactForm" novalidate>
                         <div style="margin-bottom: 24px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark);">Full Name</label>
-                            <input type="text" required style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                            <input type="text" id="contactName" required style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md);" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"><div id="nameError" style="color: #ef4444; font-size: 0.875rem; margin-top: 8px; display: none;"></div>
                         </div>
                         <div style="margin-bottom: 24px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark);">Email Address</label>
-                            <input type="email" required style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+                            <input type="email" id="contactEmail" required style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md);"><div id="emailError" style="color: #ef4444; font-size: 0.875rem; margin-top: 8px; display: none;"></div>
                         </div>
                         <div style="margin-bottom: 32px;">
                             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark);">Your Message</label>
-                            <textarea required rows="5" style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; resize: vertical;"></textarea>
+                            <textarea id="contactMessage" required rows="5" style="width: 100%; padding: 14px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-family: inherit; resize: vertical;"></textarea><div id="msgError" style="color: #ef4444; font-size: 0.875rem; margin-top: 8px; display: none;"></div>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 1.125rem;">Send Message</button>
                     </form>
@@ -212,6 +212,36 @@
                 grid-template-columns: 1fr;
             }
         }
+    
+        @media (max-width: 768px) {
+            .map-container {
+                height: auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                border-radius: 16px !important;
+            }
+            .map-container iframe {
+                height: 250px !important;
+                flex-shrink: 0;
+            }
+            .map-overlay-card {
+                position: static !important;
+                width: 100% !important;
+                max-width: none !important;
+                box-sizing: border-box !important;
+                border-radius: 0 0 16px 16px !important;
+                box-shadow: none !important;
+                transform: none !important;
+                padding: 24px !important;
+                margin: 0 !important;
+                background: var(--light-bg) !important;
+                border-top: 1px solid var(--border-color);
+            }
+            .map-section {
+                padding: 0 16px !important;
+            }
+        }
+
     </style>
     <footer class="footer" style="background-color: var(--dark); color: var(--white); padding: 80px 0 24px; border-top: none;">
         <div class="container">
@@ -286,6 +316,7 @@
     <script src="js/navigation.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/notifications.js"></script>
+      <script src="js/form.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", (event) => {

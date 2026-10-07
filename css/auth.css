@@ -145,6 +145,15 @@ body.auth-page {
 }
 
 @media (max-width: 480px) {
-  .auth-card { padding: 32px 24px; }
-  .auth-back { top: 16px; left: 16px; font-size: 0.875rem; }
+  body.auth-page { flex-direction: column; justify-content: flex-start; padding-top: 48px; }
+  .auth-card { padding: 32px 24px; margin-top: auto; margin-bottom: auto; }
+  .auth-back { 
+    position: relative; 
+    top: auto; 
+    left: auto; 
+    font-size: 0.875rem; 
+    align-self: flex-start; 
+    margin-bottom: 24px; 
+    z-index: 10;
+  }
 }

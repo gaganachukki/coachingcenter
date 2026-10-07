@@ -32,15 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Real-time input sanitization for Full Name (delegated)
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.id === 'signupName') {
+            e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+        }
+    });
+
     // Signup Submission
     if (signupForm) {
+
         signupForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            // Validation placeholder
-            if(window.showToast) window.showToast('Account created successfully!');
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 1000);
+            window.location.href = 'login.html';
         });
     }
 });\n

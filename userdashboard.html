@@ -359,7 +359,7 @@
                 z-index: 997 !important;
                 display: flex !important;
                 flex-direction: row !important;
-                flex-wrap: wrap !important;
+                flex-wrap: nowrap !important;
                 align-items: center !important;
                 justify-content: flex-end !important;
                 padding: 12px 16px 12px 56px !important;
@@ -536,7 +536,19 @@
                 font-size: 1.5rem !important;
             }
         }
-    </style>
+    
+      .mobile-page-title { display: none; }
+      @media (max-width: 768px) {
+          .mobile-page-title { 
+              display: block !important; 
+              font-size: 1.5rem; 
+              margin-bottom: 24px; 
+              color: white; 
+              font-weight: bold;
+          }
+      }
+
+  </style>
 
 </head>
 
@@ -632,8 +644,9 @@
 
     <div class="main-content">
         <div id="view-dashboard" class="page-view active">
-            <div class="topbar">
-                <h2>Stackly Student Portal</h2>
+            <h2 class="mobile-page-title">Stackly Student Portal</h2>
+              <div class="topbar">
+                  <h2>Stackly Student Portal</h2>
                 <div style="display: flex; align-items: center; gap: 16px;">
                     <div
                         style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-card); display: flex; justify-content: center; align-items: center; border: 1px solid var(--border);">
@@ -865,8 +878,9 @@
 
 
         <div id="view-courses" class="page-view" style="display: none;">
-            <div class="topbar">
-                <h2>My Courses</h2>
+            <h2 class="mobile-page-title">My Courses</h2>
+              <div class="topbar">
+                  <h2>My Courses</h2>
                 <input type="text" placeholder="Search courses..."
                     style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
             </div>
@@ -986,8 +1000,9 @@
         </div>
 
         <div id="view-assignments" class="page-view" style="display: none;">
-            <div class="topbar">
-                <h2>Assignments</h2>
+            <h2 class="mobile-page-title">Assignments</h2>
+              <div class="topbar">
+                  <h2>Assignments</h2>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="card">
@@ -1049,8 +1064,9 @@
         </div>
 
         <div id="view-tests" class="page-view" style="display: none;">
-            <div class="topbar">
-                <h2>Mock Tests Center</h2>
+            <h2 class="mobile-page-title">Mock Tests Center</h2>
+              <div class="topbar">
+                  <h2>Mock Tests Center</h2>
             </div>
 
             <div class="card"
@@ -1154,8 +1170,9 @@
         </div>
 
         <div id="view-library" class="page-view" style="display: none;">
-            <div class="topbar">
-                <h2>Digital Study Library</h2>
+            <h2 class="mobile-page-title">Digital Study Library</h2>
+              <div class="topbar">
+                  <h2>Digital Study Library</h2>
                 <div style="display: flex; gap: 12px;">
                     <select
                         style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
@@ -1284,8 +1301,9 @@
         </div>
 
         <div id="view-live" class="page-view" style="display: none;">
-            <div class="topbar">
-                <h2>Live Class Schedule</h2>
+            <h2 class="mobile-page-title">Live Class Schedule</h2>
+              <div class="topbar">
+                  <h2>Live Class Schedule</h2>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -1346,8 +1364,9 @@
         </div>
 
         <div id="view-settings" class="page-view" style="display: none;">
-            <div class="topbar">
-                <h2>Account Settings</h2>
+            <h2 class="mobile-page-title">Account Settings</h2>
+              <div class="topbar">
+                  <h2>Account Settings</h2>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
                 <div class="card">
@@ -1508,6 +1527,33 @@
             }
         })();
     </script>
+
+<!-- Auto-wrap tables for mobile scrolling -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tables = document.querySelectorAll('table');
+    tables.forEach(table => {
+        // Force minimum width to prevent column crushing on mobile
+        table.style.minWidth = '650px';
+        
+        // Check if the table is already wrapped in a scrolling container
+        const parent = table.parentElement;
+        if (parent.style.overflowX === 'auto') {
+            return; // Already wrapped
+        }
+        
+        // Wrap the table in a responsive div so ONLY the table scrolls, not the card title
+        const wrapper = document.createElement('div');
+        wrapper.style.overflowX = 'auto';
+        wrapper.style.width = '100%';
+        wrapper.className = 'table-responsive-wrapper';
+        
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+    });
+});
+</script>
 </body>
+
 
 </html>

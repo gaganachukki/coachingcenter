@@ -390,9 +390,9 @@
             /* Hide the profile name next to avatar */
             .topbar::before {
                 content: '';
-                display: block;
-                width: 120px;
-                height: 30px;
+        display: block;
+        width: 150px;
+        height: 38px;
                 background: url('assets/logo.webp') no-repeat center left;
                 background-size: contain;
                 margin-right: auto;
@@ -548,7 +548,21 @@
           }
       }
 
-  </style>
+  
+      /* Force logos to be bright and glowing on dark backgrounds */
+      .sidebar .brand img,
+      .topbar::before {
+          filter: drop-shadow(0 0 12px rgba(163, 230, 53, 0.8)) brightness(1.7) contrast(1.2) saturate(1.2) !important;
+      }
+
+  
+        @media (max-width: 768px) {
+            .search-input-desktop { display: none !important; }
+            .search-icon-mobile { display: flex !important; align-items: center; justify-content: center; width: 40px; height: 40px; }
+            .search-container { flex: 0 0 auto; margin-left: auto; }
+        }
+
+</style>
 
 </head>
 
@@ -881,8 +895,12 @@
             <h2 class="mobile-page-title">My Courses</h2>
               <div class="topbar">
                   <h2>My Courses</h2>
-                <input type="text" placeholder="Search courses..."
-                    style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
+                <div class="search-container">
+                    <input type="text" class="search-input-desktop" placeholder="Search courses..." style="padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); color: white;">
+                    <button class="search-icon-mobile" style="background: transparent; border: none; color: white; display: none;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+                </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">

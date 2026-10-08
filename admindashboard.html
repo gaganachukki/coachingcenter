@@ -314,8 +314,8 @@
     .topbar::before {
         content: '';
         display: block;
-        width: 120px;
-        height: 30px;
+        width: 150px;
+        height: 38px;
         background: url('assets/logo.webp') no-repeat center left;
         background-size: contain;
         margin-right: auto;
@@ -406,6 +406,13 @@
       }
       table th:last-child, table td:last-child {
           padding-right: 0 !important;
+      }
+
+  
+      /* Force logos to be bright and glowing on dark backgrounds */
+      .sidebar .brand img,
+      .topbar::before {
+          filter: drop-shadow(0 0 12px rgba(163, 230, 53, 0.8)) brightness(1.7) contrast(1.2) saturate(1.2) !important;
       }
 
   </style>
@@ -942,7 +949,7 @@
             <h2 class="mobile-page-title">Course Library (Admin)</h2>
               <div class="topbar">
                   <h2>Course Library (Admin)</h2>
-                <button class="btn" onclick="window.location.href='404.html'">+ Create New Course</button>
+                <button class="btn" onclick="window.location.href='404.html'">+ New Course</button>
             </div>
             <div class="res-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
 
@@ -1125,7 +1132,7 @@
             <div class="card">
                 <div class="res-flex-wrap" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px;">
                       <h3>Administrator Roles</h3>
-                      <button style="background: transparent; border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 4px;" onclick="window.location.href=\'404.html\'">+ Add Admin</button>
+                      <button style="background: transparent; border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 4px;" onclick="window.location.href='404.html'">+ Add Admin</button>
                   </div>
                 <div style="overflow-x: auto; width: 100%;"><table style="width: 100%; min-width: 650px; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
                     <thead><tr style="color: var(--text-secondary); border-bottom: 1px solid var(--border);"><th style="padding-bottom: 12px;">Admin Name</th><th style="padding-bottom: 12px;">Email Address</th><th style="padding-bottom: 12px;">Access Level</th><th style="padding-bottom: 12px;">Last Login</th><th style="padding-bottom: 12px;">Action</th></tr></thead>
